@@ -20,6 +20,7 @@ const loanSlice = createSlice({
       }
     },
 
+
     resetLoan: (state) => {
       state.quantity = 0;
     },

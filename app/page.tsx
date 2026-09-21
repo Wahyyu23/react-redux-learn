@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { addTool, resetLoan } from "@/features/loan/loanSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 
 function ToolCard({
   quantity,
@@ -36,35 +37,30 @@ function LoanSummary({
 
       <p>Total unit: {quantity}</p>
 
-      <button onClick={onReset}>
-        Kosongkan
-      </button>
+      <button onClick={onReset}>Kosongkan</button>
     </section>
   );
 }
 
 export default function Home() {
-  const [quantity, setQuantity] = useState(0);
+  //const [quantity, setQuantity] = useState(0);
+  //Dari useState, kini mencoba langsung memakai Redux Store
+
+  //[Ver 2] Membaca quantity langsung dari Redux Store
+  const quantity = useAppSelector((state) => state.loan.quantity);
+
+  //[ver 2] Mengambil fungsi dispacth
+  const dispatch = useAppDispatch();
 
   return (
     <main>
       <h1>Sistem Peminjaman Alat</h1>
 
-      <ToolCard
-        quantity={quantity}
-        onAdd={() =>
-          setQuantity((previous) =>
-            Math.min(previous + 1, 3)
-          )
-        }
-      />
+      <ToolCard quantity={quantity} onAdd={() => dispatch(addTool())} />
 
       <hr />
 
-      <LoanSummary
-        quantity={quantity}
-        onReset={() => setQuantity(0)}
-      />
+      <LoanSummary quantity={quantity} onReset={() => dispatch(resetLoan())} />
     </main>
   );
 }
