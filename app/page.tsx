@@ -6,11 +6,44 @@ import {
   resetLoan,
 } from "@/features/loan/loanSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useState } from "react";
 
 function ToolCard() {
+  const [amountInput, setAmountInput] = useState("1");
+  const [error, setError] = useState("");
+
   const quantity = useAppSelector((state) => state.loan.quantity);
 
   const dispatch = useAppDispatch();
+
+  function handleAddAmount() {
+    //Pastikan ubah string menjadi integer karena input field dibuat sebagai string
+    const amount = Number(amountInput);
+
+    //Pemeriksaan untuk memastikan input tidak kosong
+    if (amountInput.trim() === "") {
+      setError("Input tidak boleh kosong");
+      return;
+    }
+
+    //Untuk memastikan nilai adalah angka bulat dan tidak negatif
+    if (!Number.isInteger(amount) || amount <= 0) {
+      setError("Input harus angka bulat dan tidak boleh negatif");
+      return;
+    }
+
+    //Karena ada batas, pastikan nilai tidak melebihi batas
+    if (quantity + amount > 3) {
+      setError("Input melebihi batas");
+      return;
+    }
+
+    //Kirim action ke redux store lewat dispatch
+    dispatch(addToolByAmmount(amount));
+
+    setAmountInput("1");
+    setError("");
+  }
 
   return (
     <section>
@@ -22,7 +55,7 @@ function ToolCard() {
       <button onClick={() => dispatch(addTool())} disabled={quantity >= 3}>
         Tambah 1 Unit
       </button>
-      
+
       <br />
 
       <button
@@ -31,6 +64,38 @@ function ToolCard() {
       >
         Tambah 2 unit
       </button>
+      <div>
+        <label htmlFor="loan-amount">Jumlah Peminjaman</label>
+
+        <input
+          id="loan-amount"
+          type="number"
+          min="1"
+          max={3 - quantity}
+          step="1"
+          value={amountInput}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? "loan-amount-error" : undefined}
+          onChange={(event) => {
+            setAmountInput(event.target.value);
+            setError("");
+          }}
+        />
+
+        {error && (
+          <p
+            id="loan-amount-error"
+            role="alert"
+            style={{
+              color: "red",
+            }}
+          >
+            {error}
+          </p>
+        )}
+
+        <button onClick={handleAddAmount}>Tambah Sesuai Jumlah</button>
+      </div>
     </section>
   );
 }
