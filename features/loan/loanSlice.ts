@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type LoanState = {
   quantity: number;
@@ -20,6 +20,13 @@ const loanSlice = createSlice({
       }
     },
 
+    addToolByAmmount: (state, action: PayloadAction<number>) => {
+      const amount = action.payload;
+
+      if (amount > 0 && state.quantity + amount <= 3) {
+        state.quantity += amount;
+      }
+    },
 
     resetLoan: (state) => {
       state.quantity = 0;
@@ -27,6 +34,6 @@ const loanSlice = createSlice({
   },
 });
 
-export const { addTool, resetLoan } = loanSlice.actions;
+export const { addTool, resetLoan,addToolByAmmount   } = loanSlice.actions;
 
 export default loanSlice.reducer;
