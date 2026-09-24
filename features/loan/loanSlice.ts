@@ -23,7 +23,11 @@ const loanSlice = createSlice({
     addToolByAmmount: (state, action: PayloadAction<number>) => {
       const amount = action.payload;
 
-      if (amount > 0 && state.quantity + amount <= 3) {
+      if (
+        Number.isInteger(amount) &&
+        amount > 0 &&
+        state.quantity + amount <= 3
+      ) {
         state.quantity += amount;
       }
     },
@@ -34,6 +38,6 @@ const loanSlice = createSlice({
   },
 });
 
-export const { addTool, resetLoan,addToolByAmmount   } = loanSlice.actions;
+export const { addTool, resetLoan, addToolByAmmount } = loanSlice.actions;
 
 export default loanSlice.reducer;
